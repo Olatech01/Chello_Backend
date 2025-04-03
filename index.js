@@ -30,7 +30,7 @@ app.use(flash())
 app.use("/uploads", express.static("uploads"));
 app.use(cors())
 
-// app.use("/api", require("./routes/handler"))
+app.use("/api", require("./routes/handler"))
 
 
 
