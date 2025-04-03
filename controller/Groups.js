@@ -85,10 +85,39 @@ const deleteGroup = async (req, res) => {
     }
 };
 
+
+
+const joinGroup = async (req, res) => {
+    try {
+        const { userId } = req.body; // Assuming the user ID is sent in the request body
+        const groupId = req.params.id;
+
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ error: 'Group not found' });
+        }
+
+        // Check if the user is already a member
+        if (group.inviteMembers.includes(userId)) {
+            return res.status(400).json({ error: 'User is already a member of this group' });
+        }
+
+        // Add the user to the group
+        group.inviteMembers.push(userId);
+        await group.save();
+
+        res.status(200).json({ message: 'User successfully joined the group', group });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 module.exports = {
     createGroup,
     getAllGroups,
     getGroupById,
     updateGroup,
-    deleteGroup
+    deleteGroup,
+    joinGroup
 };
