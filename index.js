@@ -34,6 +34,8 @@ app.use(cors({
     origin: 'http://localhost:3000'
 }));
 
+app.use(cors({ origin: 'https://mediabackend-wxod.onrender.com' }));
+
 app.use("/api", require("./routes/handler"))
 
 
