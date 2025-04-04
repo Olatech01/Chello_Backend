@@ -27,11 +27,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session())
 app.use(flash())
-app.use('/uploads', express.static('uploads'));
 
-app.use(cors())
+const uploadsPath = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadsPath));
+
 app.use(cors({
-    origin: 'http://localhost:3000'
+    origin: 'https://social-media-platform-ruby.vercel.app',
+    credentials: true
 }));
 
 
