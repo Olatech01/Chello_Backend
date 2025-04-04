@@ -6,7 +6,7 @@ const createGroup = async (req, res) => {
         const profilePhoto = req.files['profilePhoto'] ? req.files['profilePhoto'][0].path : null;
         const coverPhoto = req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null;
 
-        if (!groupName || !groupDescription || !groupRules || !inviteMembers || !profilePhoto || !coverPhoto) {
+        if (!groupName || !groupDescription || !groupRules || !inviteMembers) {
             return res.status(400).json({ error: "All fields are required" });
         }
 
