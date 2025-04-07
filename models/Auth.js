@@ -26,6 +26,18 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },
+    isSuspended: {
+        type: Boolean,
+        default: false
+    },
+    suspensionEndDate:{
+        type: Date,
+        default: null
+    },
     resetToken: String,
     resetTokenExpiration: Date,
     isVerified: {

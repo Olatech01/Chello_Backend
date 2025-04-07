@@ -6,6 +6,8 @@ const { createPost, getAllPosts, getPostById, deletePost, updatePost, likePost, 
 const auth = require("../middleWare/auth");
 const { getProfile, updateProfile } = require("../controller/ProfileController");
 const { getNotifications, deleteNotification } = require("../controller/Notification");
+const { blockUser, unblockUser, suspendUser, unsuspendUser, getAllUsers, getUserById } = require("../controller/Admin");
+const adminAuth = require("../middleWare/adminAuth");
 
 
 
@@ -71,6 +73,36 @@ router.get('/posts/user/:userId', auth, getPostsByUser)
 router.post('/posts/:id/bookmark', auth, bookmarkPost); 
 router.post('/posts/:id/unbookmark', auth, unbookmarkPost); 
 router.get('/posts/bookmarks', auth, getAllBookmarks); 
+
+
+
+
+// Admin //
+router.put("/admin/block/:userId", adminAuth, blockUser);
+router.put("/admin/unblock/:userId", adminAuth, unblockUser);
+router.put("/admin/suspend/:userId", adminAuth, suspendUser);
+router.put("/admin/unsuspend/:userId", adminAuth, unsuspendUser);
+router.get("/admin/users", adminAuth, getAllUsers);
+router.get("/admin/user/:userId", adminAuth, getUserById);
+// router.delete("/admin/user/:userId", adminAuth, deleteUser);
+// router.put("/admin/user/:userId", adminAuth, updateUser);
+// router.get("/admin/notifications", adminAuth, getAllNotifications);
+// router.delete("/admin/notification/:notificationId", adminAuth, deleteNotification);
+// router.get("/admin/posts", adminAuth, getAllPosts);
+// router.delete("/admin/post/:postId", adminAuth, deletePost);
+// router.get("/admin/groups", adminAuth, getAllGroups);
+// router.delete("/admin/group/:groupId", adminAuth, deleteGroup);
+// router.get("/admin/comments", adminAuth, getAllComments);
+// router.delete("/admin/comment/:commentId", adminAuth, deleteComment);
+// router.get("/admin/likes", adminAuth, getAllLikes);
+// router.delete("/admin/like/:likeId", adminAuth, deleteLike);
+// router.get("/admin/bookmarks", adminAuth, getAllBookmarks);
+// router.delete("/admin/bookmark/:bookmarkId", adminAuth, deleteBookmark);
+// router.get("/admin/mentions", adminAuth, getAllMentions);
+// router.delete("/admin/mention/:mentionId", adminAuth, deleteMention);
+// router.get("/admin/hashtags", adminAuth, getAllHashtags);
+// router.delete("/admin/hashtag/:hashtagId", adminAuth, deleteHashtag);
+
 
 
 

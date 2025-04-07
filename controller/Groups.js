@@ -112,6 +112,11 @@ const joinGroup = async (req, res) => {
     }
 };
 
+const inviteMembers = async(req, res) => {
+    
+}
+
+
 
 module.exports = {
     createGroup,

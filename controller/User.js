@@ -80,7 +80,7 @@ const register = async (req, res) => {
         await sendMail(email, subject, htmlContent);
 
 
-        
+
         return res.status(201).json({
             msg: "User registered successfully. Please verify your email.",
             newUser,
@@ -130,8 +130,17 @@ const login = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
-        if (!user.isVerified) {
-            return res.status(403).json({ error: "Email is not verified" });
+        if (user.isBlocked) {
+            return res.status(403).json({ error: "Your account has been blocked by the admin." });
+        }
+        if (user.isSuspended) {
+            if (user.suspensionEndDate && user.suspensionEndDate > Date.now()) {
+                return res.status(403).json({ error: `Your account is suspended until ${user.suspensionEndDate}` });
+            } else {
+                user.isSuspended = false;
+                user.suspensionEndDate = null;
+                await user.save();
+            }
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
@@ -244,7 +253,7 @@ const followUser = async (req, res) => {
             user: userIdToFollow,
             type: 'follow',
             content: `${req.user.username} started following you`,
-            image: `${req.user.profilePicture }`,
+            image: `${req.user.profilePicture}`,
             fullName: `${req.user.fullName}`
 
         });
@@ -286,13 +295,35 @@ const unFollowUser = async (req, res) => {
         if (notification) {
             await notification.remove();
         }
-        
+
 
         await notification.save();
 
         res.status(200).json({ message: 'User unfollowed successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
+    }
+}
+
+
+
+const inviteUser = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await userModel.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const subject = "You're Invited! Join Us Now";
+        const htmlContent = `<p>Hi,</p><p>${user.username} has invited you to join our platform. Click <a href="${process.env.FRONTEND_URL}/register">here</a> to sign up!</p>`;
+        await sendMail(email, subject, htmlContent);
+
+        return res.status(200).json({ msg: "Invitation sent successfully" });
+    } catch (error) {
+        console.error("Error sending invitation:", error);
+        return res.status(500).json({ error: "Failed to send invitation" });
     }
 }
 
@@ -305,4 +336,5 @@ module.exports = {
     followUser,
     requestPasswordReset,
     unFollowUser,
+    inviteUser
 };
