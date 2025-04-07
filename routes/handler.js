@@ -6,7 +6,7 @@ const { createPost, getAllPosts, getPostById, deletePost, updatePost, likePost, 
 const auth = require("../middleWare/auth");
 const { getProfile, updateProfile } = require("../controller/ProfileController");
 const { getNotifications, deleteNotification } = require("../controller/Notification");
-const { blockUser, unblockUser, suspendUser, unsuspendUser, getAllUsers, getUserById } = require("../controller/Admin");
+const { blockUser, unblockUser, suspendUser, unsuspendUser, getAllUsers, getUserById, getAllSuspendedUsers, userGrowth } = require("../controller/Admin");
 const adminAuth = require("../middleWare/adminAuth");
 
 
@@ -84,6 +84,9 @@ router.put("/admin/suspend/:userId", adminAuth, suspendUser);
 router.put("/admin/unsuspend/:userId", adminAuth, unsuspendUser);
 router.get("/admin/users", adminAuth, getAllUsers);
 router.get("/admin/user/:userId", adminAuth, getUserById);
+router.get("/admin/allBlockedUser", adminAuth, getAllBookmarks);
+router.get("/admin/allSuspendedUser", adminAuth, getAllSuspendedUsers);
+router.get("/admin/userGrowth", adminAuth, userGrowth);
 // router.delete("/admin/user/:userId", adminAuth, deleteUser);
 // router.put("/admin/user/:userId", adminAuth, updateUser);
 // router.get("/admin/notifications", adminAuth, getAllNotifications);

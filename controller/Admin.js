@@ -20,6 +20,16 @@ const blockUser = async (req, res) => {
     }
 };
 
+const getAllBlockedUsers = async (req, res) => {
+    try {
+        const blockedUsers = await userModel.find({ isBlocked: true });
+        res.status(200).json(blockedUsers);
+    } catch (error) {
+        console.error('Error fetching blocked users:', error);
+        res.status(500).json({ error: 'Failed to fetch blocked users' });
+    }
+}
+
 // Unblock a user
 const unblockUser = async (req, res) => {
     try {
@@ -65,6 +75,15 @@ const suspendUser = async (req, res) => {
     }
 };
 
+const getAllSuspendedUsers = async (req, res) => {
+    try {
+        const suspendedUsers = await userModel.find({ isSuspended: true });
+        res.status(200).json(suspendedUsers);
+    } catch (error) {
+        console.error('Error fetching suspended users:', error);
+        res.status(500).json({ error: 'Failed to fetch suspended users' });
+    }
+}
 // Unsuspend a user (automatically or manually)
 const unsuspendUser = async (req, res) => {
     try {
@@ -111,11 +130,45 @@ const getUserById = async (req, res) => {
     }
 }
 
+const userGrowth = async (req, res) => {
+    try {
+        const growthData = await userModel.aggregate([
+            {
+                $group: {
+                    _id: { $month: "$createdAt" }, // Group by the month of the `createdAt` field
+                    count: { $sum: 1 } // Count the number of users in each month
+                }
+            },
+            {
+                $sort: { _id: 1 } // Sort by month (January to December)
+            }
+        ]);
+
+        // Map the results to include all months (1-12) with a count of 0 if no users registered in that month
+        const monthlyGrowth = Array.from({ length: 12 }, (_, i) => ({
+            month: i + 1,
+            count: 0
+        }));
+
+        growthData.forEach(data => {
+            monthlyGrowth[data._id - 1].count = data.count;
+        });
+
+        res.status(200).json(monthlyGrowth);
+    } catch (error) {
+        console.error('Error calculating user growth:', error);
+        res.status(500).json({ error: 'Failed to calculate user growth' });
+    }
+};
+
 module.exports = {
     blockUser,
     unblockUser,
     suspendUser,
     unsuspendUser,
     getAllUsers,
-    getUserById
+    getUserById,
+    getAllBlockedUsers,
+    getAllSuspendedUsers,
+    userGrowth
 };

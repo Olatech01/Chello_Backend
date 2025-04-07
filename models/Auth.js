@@ -56,7 +56,11 @@ const userSchema = new Schema({
     profile: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile'
-    }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
 }, { timestamps: true });
 
 userSchema.plugin(passportLocalMongoose);
