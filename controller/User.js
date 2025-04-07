@@ -156,6 +156,7 @@ const login = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 token: token,
+                isAdmin: user.isAdmin,
             }
         });
 
