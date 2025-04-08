@@ -6,7 +6,11 @@ const jwt = require('jsonwebtoken');
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema({
-    fullName: {
+    firstName: {
+        type: String,
+        required: true
+    },
+    otherName: {
         type: String,
         required: true
     },

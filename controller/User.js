@@ -36,10 +36,10 @@ async function sendMail(to, subject, htmlContent) {
 }
 
 const register = async (req, res) => {
-    const { username, email, password, fullName, phoneNumber, bio, location, website } = req.body;
+    const { username, email, password, firstName, otherName, phoneNumber, bio, location, website } = req.body;
 
     try {
-        if (!username || !email || !password || !fullName) {
+        if (!username || !email || !password || !firstName || !otherName) {
             return res.status(400).json({ error: "All fields are required" });
         }
 
@@ -55,7 +55,8 @@ const register = async (req, res) => {
         const otpExpiration = Date.now() + 10 * 60 * 1000;
 
         const newUser = await userModel.create({
-            fullName,
+            firstName,
+            otherName,
             username,
             email,
             password: hashedPassword,
@@ -152,7 +153,9 @@ const login = async (req, res) => {
             msg: "Logged in successfully",
             user: {
                 _id: user._id,
-                fullName: user.fullName,
+                firstName: user.firstName,
+                otherName: user.otherName,
+                // profilePicture: user.profilePicture,
                 username: user.username,
                 email: user.email,
                 token: token,
@@ -190,7 +193,6 @@ const changePassword = async (req, res) => {
         user.password = hashedPassword;
         await user.save();
 
-        // Send password change confirmation email
         const subject = "Your Password Has Been Changed";
         const htmlContent = passwordChangeConfirmationTemplate(user.username);
         await sendMail(email, subject, htmlContent);
