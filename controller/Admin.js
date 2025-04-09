@@ -107,7 +107,7 @@ const unsuspendUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await userModel.find({isAdmin: {$ne: true}});
+        const users = await userModel.find( {isAdmin: {$ne: true} });
         res.status(200).json(users);
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -144,7 +144,6 @@ const userGrowth = async (req, res) => {
             }
         ]);
 
-        // Map the results to include all months (1-12) with a count of 0 if no users registered in that month
         const monthlyGrowth = Array.from({ length: 12 }, (_, i) => ({
             month: i + 1,
             count: 0
