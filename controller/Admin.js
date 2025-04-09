@@ -107,7 +107,7 @@ const unsuspendUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await userModel.find({});
+        const users = await userModel.find({isAdmin: {$ne: true}});
         res.status(200).json(users);
     } catch (error) {
         console.error('Error fetching users:', error);
