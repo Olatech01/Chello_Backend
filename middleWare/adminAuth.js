@@ -4,7 +4,7 @@ const jwtSecret = process.env.JWT_SECRET;
 
 const adminAuth = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
+        const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, jwtSecret);
 
         const user = await userModel.findById(decoded.id);
