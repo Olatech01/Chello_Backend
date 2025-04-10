@@ -28,7 +28,9 @@ const createPost = async (req, res) => {
 
         await notification.save();
 
-        res.status(201).json(post);
+        const populatedPost = await postModel.findById(post._id).populate('user', 'username email fullName');
+
+        res.status(201).json(populatedPost);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -55,7 +57,8 @@ const getAllPosts = async (req, res) => {
                     user: {
                         _id: 1,
                         username: 1,
-                        fullName: 1,
+                        firstName: 1,
+                        otherName: 1,
                         email: 1
                     },
                     likes: 1,
@@ -143,7 +146,7 @@ const likePost = async (req, res) => {
         await post.save();
 
         const notification = new notificationModel({
-            user: post.user._id, 
+            user: post.user._id,
             type: 'like',
             content: `${req.user.username} liked your post`,
             post: post._id
