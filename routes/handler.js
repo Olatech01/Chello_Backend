@@ -8,6 +8,7 @@ const { getProfile, updateProfile } = require("../controller/ProfileController")
 const { getNotifications, deleteNotification } = require("../controller/Notification");
 const { blockUser, unblockUser, suspendUser, unsuspendUser, getAllUsers, getUserById, getAllSuspendedUsers, userGrowth } = require("../controller/Admin");
 const adminAuth = require("../middleWare/adminAuth");
+const { getTrendingTopics, getTrendingUsers } = require("../controller/Trending");
 
 
 
@@ -73,6 +74,12 @@ router.get('/posts/user/:userId', auth, getPostsByUser)
 router.post('/posts/:id/bookmark', auth, bookmarkPost); 
 router.post('/posts/:id/unbookmark', auth, unbookmarkPost); 
 router.get('/posts/bookmarks', auth, getAllBookmarks); 
+
+
+
+// Trending //
+router.get("/trending/topics", auth, getTrendingTopics)
+router.get("/trending/users", auth, getTrendingUsers)
 
 
 

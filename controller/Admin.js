@@ -135,12 +135,12 @@ const userGrowth = async (req, res) => {
         const growthData = await userModel.aggregate([
             {
                 $group: {
-                    _id: { $month: "$createdAt" }, // Group by the month of the `createdAt` field
-                    count: { $sum: 1 } // Count the number of users in each month
+                    _id: { $month: "$createdAt" },
+                    count: { $sum: 1 }
                 }
             },
             {
-                $sort: { _id: 1 } // Sort by month (January to December)
+                $sort: { _id: 1 } 
             }
         ]);
 

@@ -251,27 +251,6 @@ const bookmarkPost = async (req, res) => {
     }
 };
 
-// const unbookmarkPost = async (req, res) => {
-//     try {
-//         const post = await postModel.findById(req.params.id);
-//         if (!post) {
-//             return res.status(404).json({ error: 'Post not found' });
-//         }
-
-//         if (!post.bookmarks) post.bookmarks = [];
-//         const index = post.bookmarks.indexOf(req.user._id);
-//         if (index === -1) {
-//             return res.status(400).json({ error: 'You have not bookmarked this post' });
-//         }
-
-//         post.bookmarks.splice(index, 1);
-//         await post.save();
-
-//         res.status(200).json(post);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
 
 
 
