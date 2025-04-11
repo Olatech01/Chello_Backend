@@ -2,7 +2,7 @@ const express = require("express");
 const { register, emailVerification, login, changePassword, followUser, unFollowUser } = require("../controller/User");
 const upload = require("../config/multerConfig");
 const { createGroup, getGroupById, getAllGroups, updateGroup, deleteGroup, joinGroup } = require("../controller/Groups");
-const { createPost, getAllPosts, getPostById, deletePost, updatePost, likePost, commentPost, getPostsByUser, mentionUser, bookmarkPost, unbookmarkPost, getAllBookmarks, unlikePost } = require("../controller/Posts");
+const { createPost, getAllPosts, getPostById, deletePost, updatePost, likePost, commentPost, getPostsByUser, mentionUser, bookmarkPost, unbookmarkPost, getAllBookmarks, unlikePost, getAllComments } = require("../controller/Posts");
 const auth = require("../middleWare/auth");
 const { getProfile, updateProfile } = require("../controller/ProfileController");
 const { getNotifications, deleteNotification } = require("../controller/Notification");
@@ -69,6 +69,7 @@ router.delete("/deletePost/:id", auth, deletePost)
 router.post('/posts/:id/like', auth, likePost);
 router.post('posts/:id/unlike', auth, unlikePost);
 router.post('/posts/:id/comment', auth, commentPost);
+router.get('/posts/:id/comments', auth, getAllComments);
 router.post('/posts/:id/mention', auth, mentionUser);
 router.get('/posts/user/:userId', auth, getPostsByUser)
 router.post('/posts/:id/bookmark', auth, bookmarkPost); 

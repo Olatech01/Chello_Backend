@@ -195,7 +195,7 @@ const commentPost = async (req, res) => {
         await post.save();
 
         const notification = new notificationModel({
-            user: post.user._id, // The owner of the post
+            user: post.user._id,
             type: 'comment',
             content: `${req.user.username} commented on your post`,
             post: post._id
@@ -208,6 +208,18 @@ const commentPost = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+const getAllComments = async (req, res) => {
+    try {
+        const post = await postModel.findById(req.params.id).populate('user');
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        res.status(200).json(post.comments);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
 
 const mentionUser = async (req, res) => {
     try {
@@ -297,5 +309,6 @@ module.exports = {
     mentionUser,
     bookmarkPost,
     unbookmarkPost,
-    getAllBookmarks
+    getAllBookmarks,
+    getAllComments
 };
