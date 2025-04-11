@@ -9,6 +9,7 @@ const { getNotifications, deleteNotification } = require("../controller/Notifica
 const { blockUser, unblockUser, suspendUser, unsuspendUser, getAllUsers, getUserById, getAllSuspendedUsers, userGrowth } = require("../controller/Admin");
 const adminAuth = require("../middleWare/adminAuth");
 const { getTrendingTopics, getTrendingUsers } = require("../controller/Trending");
+const { reportUser, reportPost, reportGroup, getAllReports } = require("../controller/Reports");
 
 
 
@@ -82,6 +83,17 @@ router.get('/posts/bookmarks', auth, getAllBookmarks);
 // Trending //
 router.get("/trending/topics", auth, getTrendingTopics)
 router.get("/trending/users", auth, getTrendingUsers)
+
+
+
+
+// Reports //
+
+router.post('/report/user', auth, reportUser)
+router.post('/report/post', auth, reportPost)
+router.post('/report/group', auth, reportGroup)
+router.get('/reports', adminAuth, getAllReports)
+
 
 
 
