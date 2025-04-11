@@ -1,8 +1,10 @@
-const { Report } = require('../models/Report');
-const { User } = require('../models/Auth');
-const { Post } = require('../models/Post');
-const { Notification } = require('../models/Notifications');
-const { Group } = require('../models/Group');
+const Group = require("../models/Group");
+const postModel = require('../models/Post');
+const notificationModel = require('../models/Notifications');
+const userModel = require('../models/Auth');
+const Report = require('../models/Report');
+
+
 
 
 
@@ -16,9 +18,9 @@ const reportUser = async (req, res) => {
             reason,
             comment
         });
-        const post = await Post.findById(postId);
-        const user = await User.findById(userId);
-        const notification = await Notification.create({
+        const post = await postModel.findById(postId);
+        const user = await userModel.findById(userId);
+        const notification = await notificationModel.create({
             user: post.user,
             type: 'report',
             content: `${user.name} reported your post.`,
@@ -26,6 +28,7 @@ const reportUser = async (req, res) => {
             createdAt: new Date(),
             read: false
         });
+        await report.save()
         res.status(201).json({ message: 'Report created successfully', report, notification });
     } catch (error) {
         console.error('Error creating report:', error);
@@ -38,10 +41,8 @@ const reportPost = async (req, res) => {
     try {
         const { userId, postId, reason, comment } = req.body;
 
-        // Log the incoming request body
         console.log('Request Body:', req.body);
 
-        // Create the report
         const report = await Report.create({
             user: userId,
             post: postId,
@@ -50,15 +51,15 @@ const reportPost = async (req, res) => {
         });
 
         // Fetch the post and user
-        const post = await Post.findById(postId);
-        const user = await User.findById(userId);
+        const post = await postModel.findById(postId);
+        const user = await userModel.findById(userId);
 
         // Log the fetched post and user
         console.log('Post:', post);
         console.log('User:', user);
 
         // Create the notification
-        const notification = await Notification.create({
+        const notification = await notificationModel.create({
             user: post.user,
             type: 'report',
             content: `${user.name} reported your post.`,
@@ -66,6 +67,8 @@ const reportPost = async (req, res) => {
             createdAt: new Date(),
             read: false
         });
+
+        await report.save()
 
         res.status(201).json({ message: 'Report created successfully', report, notification });
     } catch (error) {
@@ -127,8 +130,8 @@ const reportGroup = async (req, res) => {
             comment
         });
         const group = await Group.findById(groupId);
-        const user = await User.findById(userId);
-        const notification = await Notification.create({
+        const user = await userModel.findById(userId);
+        const notification = await notificationModel.create({
             user: group.user,
             type: 'report',
             content: `${user.name} reported your group.`,

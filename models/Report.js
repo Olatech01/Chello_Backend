@@ -12,6 +12,11 @@ const reportSchema = new Schema({
         ref: 'Post',
         required: true
     },
+    group: {
+        type: Schema.Types.ObjectId,
+        ref: 'Group',
+        required: true
+    },
     reason: {
         type: String,
         required: true
@@ -27,5 +32,5 @@ const reportSchema = new Schema({
 });
 
 const Report = model('Report', reportSchema);
-
+ 
 module.exports = Report;
