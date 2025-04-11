@@ -221,6 +221,40 @@ const getAllComments = async (req, res) => {
     }
 }
 
+const replyComment = async (req, res) => {
+    try {
+        const post = await postModel.findById(req.params.id).populate('user');
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+
+        const comment = post.comments.id(req.params.commentId);
+        if (!comment) {
+            return res.status(404).json({ error: 'Comment not found' });
+        }
+
+        const reply = {
+            user: req.user._id,
+            text: req.body.text
+        };
+        comment.replies.push(reply);
+        await post.save();
+
+        const notification = new notificationModel({
+            user: post.user._id,
+            type: 'reply',
+            content: `${req.user.username} replied to your comment`,
+            post: post._id
+        });
+
+        await notification.save();
+
+        res.status(200).json(post);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
 const mentionUser = async (req, res) => {
     try {
         const { postId, mentionedUserId } = req.body;
@@ -310,5 +344,6 @@ module.exports = {
     bookmarkPost,
     unbookmarkPost,
     getAllBookmarks,
-    getAllComments
+    getAllComments,
+    replyComment
 };
