@@ -1,7 +1,3 @@
-
-
-
-
 const { Report } = require('../models/Report');
 const { User } = require('../models/Auth');
 const { Post } = require('../models/Post');
@@ -41,14 +37,27 @@ const reportUser = async (req, res) => {
 const reportPost = async (req, res) => {
     try {
         const { userId, postId, reason, comment } = req.body;
+
+        // Log the incoming request body
+        console.log('Request Body:', req.body);
+
+        // Create the report
         const report = await Report.create({
             user: userId,
             post: postId,
             reason,
             comment
         });
+
+        // Fetch the post and user
         const post = await Post.findById(postId);
         const user = await User.findById(userId);
+
+        // Log the fetched post and user
+        console.log('Post:', post);
+        console.log('User:', user);
+
+        // Create the notification
         const notification = await Notification.create({
             user: post.user,
             type: 'report',
@@ -57,12 +66,13 @@ const reportPost = async (req, res) => {
             createdAt: new Date(),
             read: false
         });
+
         res.status(201).json({ message: 'Report created successfully', report, notification });
     } catch (error) {
         console.error('Error creating report:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
-}
+};
 
 
 

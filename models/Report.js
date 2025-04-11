@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
-
 const reportSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
@@ -14,7 +13,7 @@ const reportSchema = new Schema({
         required: true
     },
     reason: {
-        type: ['spam', 'abuse', 'harassment', 'nudity', 'hate speech', 'other'],
+        type: String,
         required: true
     },
     comment: {
@@ -27,7 +26,6 @@ const reportSchema = new Schema({
     }
 });
 
+const Report = model('Report', reportSchema);
 
-const reportModel = model('Report', reportSchema);
-
-module.exports = reportModel;
+module.exports = Report;
