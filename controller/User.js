@@ -149,13 +149,15 @@ const login = async (req, res) => {
         }
         const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '5h' });
 
+        user.lastLogin = new Date();
+        await user.save();
+
         return res.json({
             msg: "Logged in successfully",
             user: {
                 _id: user._id,
                 firstName: user.firstName,
                 otherName: user.otherName,
-                // profilePicture: user.profilePicture,
                 username: user.username,
                 email: user.email,
                 token: token,
