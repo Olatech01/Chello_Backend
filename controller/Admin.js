@@ -54,7 +54,7 @@ const unblockUser = async (req, res) => {
 const suspendUser = async (req, res) => {
     try {
         const { userId } = req.params;
-        const { suspensionDuration } = req.body; // Duration in days
+        const { suspensionDuration } = req.body;
 
         const user = await userModel.findById(userId);
         if (!user) {
@@ -132,7 +132,7 @@ const getAllUsers = async (req, res) => {
             {
                 $project: {
                     firstName: 1,
-                    lastName: 1,
+                    otherName: 1,
                     email: 1,
                     dateJoined: '$createdAt',
                     lastActive: '$lastLogin',

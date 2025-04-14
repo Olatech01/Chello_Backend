@@ -1,4 +1,3 @@
-// filepath: c:\Users\hp\Documents\Mine\SocialMediaBackend\model\Auth.js
 const mongoose = require('mongoose');
 const passport = require('passport');
 const passportLocalMongoose = require('passport-local-mongoose');
