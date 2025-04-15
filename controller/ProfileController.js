@@ -16,8 +16,8 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const { fullName, username, phoneNumber, bio, location, website } = req.body;
-        const updatedUserData = { fullName, username };
+        const { firstName, otherName, username, phoneNumber, bio, location, website } = req.body;
+        const updatedUserData = { firstName, otherName, username };
         const updatedProfileData = { phoneNumber, bio, location, website };
 
         if (req.file) {
