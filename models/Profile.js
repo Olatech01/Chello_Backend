@@ -12,11 +12,15 @@ const profileSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        required: false
+        default: null
     },
     bio: {
         type: String,
         required: false
+    },
+    coverPhoto: {
+        type: String,
+        default: null
     },
     location: {
         type: String,
@@ -27,6 +31,27 @@ const profileSchema = new mongoose.Schema({
         required: false
     }
 }, { timestamps: true });
+
+profileSchema.virtual('profilePictureUrl').get(function () {
+    if (!this.profilePicture) {
+        return null;
+    }
+    const baseUrl = process.env.BASE_URL || 'http://localhost:6060';
+    return `${baseUrl}/${this.profilePicture.replace(/\\/g, '/')}`;
+});
+
+// Virtual for cover photo URL
+profileSchema.virtual('coverPhotoUrl').get(function () {
+    if (!this.coverPhoto) {
+        return null;
+    }
+    const baseUrl = process.env.BASE_URL || 'http://localhost:6060';
+    return `${baseUrl}/${this.coverPhoto.replace(/\\/g, '/')}`;
+});
+
+// Ensure virtuals are included when converting to JSON
+profileSchema.set('toJSON', { virtuals: true });
+profileSchema.set('toObject', { virtuals: true });
 
 const profileModel = mongoose.model('Profile', profileSchema);
 

@@ -3,38 +3,65 @@ const notificationModel = require('../models/Notifications');
 
 const createPost = async (req, res) => {
     try {
-        const { description, contentType } = req.body;
-        const contentUrl = req.file ? req.file.path : null;
+        const { description } = req.body;
 
-        if (!contentType || !contentUrl) {
-            return res.status(400).json({ error: "Content type and content URL are required" });
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).json({ error: "No files uploaded" });
+        }
+
+        const BASE_URL = process.env.BASE_URL || "http://localhost:6060";
+        const contentUrls = [];
+        let contentType = "text";
+
+        const processFiles = (files, type) => {
+            if (files && files.length > 0) {
+                files.forEach(file => {
+                    // Use only the filename, not full path
+                    const filename = file.filename || file.path.split(/[\\/]/).pop();
+                    contentUrls.push(`${BASE_URL}/uploads/${filename}`);
+                });
+                contentType = type;
+            }
+        };
+
+        processFiles(req.files.images, "image");
+        processFiles(req.files.videos, "video");
+        processFiles(req.files.audios, "audio");
+
+        // If no media, but description exists → text post
+        if (contentUrls.length === 0 && description) {
+            contentType = "text";
         }
 
         const post = new postModel({
-            description,
+            description: description || "",
             contentType,
-            contentUrl,
+            contentUrl: contentUrls,  // Now clean URLs
             user: req.user._id
         });
 
         await post.save();
 
-        const notification = new notificationModel({
-            user: req.user._id,
-            type: 'post',
-            content: 'New post created',
-            post: post._id
+        // Populate user if needed before sending
+        await post.populate('user', 'username email profilePicture');
+
+        res.status(201).json({
+            success: true,
+            message: "Post created successfully",
+            post
         });
 
-        await notification.save();
-
-        const populatedPost = await postModel.findById(post._id).populate('user', 'username email fullName');
-
-        res.status(201).json(populatedPost);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error("Create post error:", error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 };
+
+
+
 
 const getAllPosts = async (req, res) => {
     try {
@@ -45,7 +72,23 @@ const getAllPosts = async (req, res) => {
                     from: 'users',
                     localField: 'user',
                     foreignField: '_id',
-                    as: 'user'
+                    as: 'user',
+                    pipeline: [
+                        {
+                            $lookup: {
+                                from: 'profiles', // Assuming your profile collection is named 'profiles'
+                                localField: 'profile',
+                                foreignField: '_id',
+                                as: 'profileDetails'
+                            }
+                        },
+                        {
+                            $unwind: {
+                                path: '$profileDetails',
+                                preserveNullAndEmptyArrays: true // In case user has no profile
+                            }
+                        }
+                    ]
                 }
             },
             { $unwind: '$user' },
@@ -59,7 +102,8 @@ const getAllPosts = async (req, res) => {
                         username: 1,
                         firstName: 1,
                         otherName: 1,
-                        email: 1
+                        email: 1,
+                        profile: '$user.profileDetails' // Get the populated profile
                     },
                     likes: 1,
                     comments: 1,
@@ -77,7 +121,15 @@ const getAllPosts = async (req, res) => {
 const getPostsByUser = async (req, res) => {
     try {
         const userId = req.params.userId;
-        const posts = await postModel.find({ user: userId }).populate('user', 'username email');
+        const posts = await postModel.find({ user: userId })
+            .populate({
+                path: 'user',
+                select: 'username email firstName otherName',
+                populate: {
+                    path: 'profile',
+                    model: 'Profile'
+                }
+            });
         res.status(200).json(posts);
     } catch (error) {
         res.status(500).json({ error: error.message });

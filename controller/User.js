@@ -1,4 +1,5 @@
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs')
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
@@ -36,10 +37,10 @@ async function sendMail(to, subject, htmlContent) {
 }
 
 const register = async (req, res) => {
-    const { username, email, password, firstName, otherName, phoneNumber, bio, location, website } = req.body;
+    const { username, email, password, fullName, phoneNumber, bio, location, website } = req.body;
 
     try {
-        if (!username || !email || !password || !firstName || !otherName) {
+        if (!username || !email || !password || !fullName) {
             return res.status(400).json({ error: "All fields are required" });
         }
 
@@ -51,18 +52,12 @@ const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const otp = crypto.randomInt(100000, 999999).toString();
-        const otpExpiration = Date.now() + 10 * 60 * 1000;
 
         const newUser = await userModel.create({
-            firstName,
-            otherName,
-            username,
+            fullName: fullName,
+            username: username,
             email,
             password: hashedPassword,
-            verificationToken: otp,
-            otpExpiration,
-            isVerified: false
         });
 
         const newProfile = await profileModel.create({
@@ -75,11 +70,6 @@ const register = async (req, res) => {
 
         newUser.profile = newProfile._id;
         await newUser.save();
-
-        const subject = "Welcome to Our Platform - Verify Your Email";
-        const htmlContent = welcomeTemplate(username, otp);
-        await sendMail(email, subject, htmlContent);
-
 
 
         return res.status(201).json({
@@ -156,8 +146,7 @@ const login = async (req, res) => {
             msg: "Logged in successfully",
             user: {
                 _id: user._id,
-                firstName: user.firstName,
-                otherName: user.otherName,
+                fullName: user.fullName,
                 username: user.username,
                 email: user.email,
                 token: token,

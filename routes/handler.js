@@ -5,7 +5,7 @@ const { createGroup, getGroupById, getAllGroups, updateGroup, deleteGroup, joinG
 const { createPost, getAllPosts, getPostById, deletePost, updatePost, likePost, commentPost, getPostsByUser, mentionUser, bookmarkPost, unbookmarkPost, getAllBookmarks, unlikePost, getAllComments, replyComment } = require("../controller/Posts");
 const auth = require("../middleWare/auth");
 const { getProfile, updateProfile } = require("../controller/ProfileController");
-const { getNotifications, deleteNotification } = require("../controller/Notification");
+const { getNotifications, deleteNotification, getNotificationsByUser } = require("../controller/Notification");
 const { blockUser, unblockUser, suspendUser, unsuspendUser, getAllUsers, getUserById, getAllSuspendedUsers, userGrowth } = require("../controller/Admin");
 const adminAuth = require("../middleWare/adminAuth");
 const { getTrendingTopics, getTrendingUsers } = require("../controller/Trending");
@@ -31,7 +31,10 @@ router.post('/unfollow', auth, unFollowUser);
 
 
 router.get('/profile/:userId', auth, getProfile)
-router.put('/profile', auth, upload.single('profilePicture'), updateProfile)
+router.patch('/profile', auth, upload.fields([
+    { name: "profilePicture", maxCount: 1 },
+    { name: "coverPhoto", maxCount: 1 }
+]), updateProfile);
 
 
 
@@ -39,6 +42,7 @@ router.put('/profile', auth, upload.single('profilePicture'), updateProfile)
 
 router.get('/notifications', auth, getNotifications);
 router.delete('/notifications/:id', auth, deleteNotification);
+router.get('/notifications/:id', auth, getNotificationsByUser);
 
 
 // Groups //
@@ -62,21 +66,25 @@ router.post('/:id/join', auth, joinGroup);
 
 // Posts //
 
-router.post("/posts", auth, upload.single('content'), createPost)
+router.post("/posts", auth, upload.fields([
+    { name: "images", maxCount: 10 },
+    { name: "videos", maxCount: 5 },
+    { name: "audios", maxCount: 5 },
+]), createPost)
 router.get("/posts", auth, getAllPosts)
 router.get("/getSingelPost/:id", auth, getPostById)
 router.put("/posts/:id", auth, upload.single('content'), updatePost)
 router.delete("/deletePost/:id", auth, deletePost)
 router.post('/posts/:id/like', auth, likePost);
-router.post('posts/:id/unlike', auth, unlikePost);
+router.post('/posts/:id/unlike', auth, unlikePost);
 router.post('/posts/:id/comment', auth, commentPost);
 router.get('/posts/:id/comments', auth, getAllComments);
 router.post('/posts/:id/comments/:commentId/reply', auth, replyComment);
 router.post('/posts/:id/mention', auth, mentionUser);
 router.get('/posts/user/:userId', auth, getPostsByUser)
-router.post('/posts/:id/bookmark', auth, bookmarkPost); 
-router.post('/posts/:id/unbookmark', auth, unbookmarkPost); 
-router.get('/posts/bookmarks', auth, getAllBookmarks); 
+router.post('/posts/:id/bookmark', auth, bookmarkPost);
+router.post('/posts/:id/unbookmark', auth, unbookmarkPost);
+router.get('/posts/bookmarks', auth, getAllBookmarks);
 
 
 

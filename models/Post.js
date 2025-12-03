@@ -20,17 +20,16 @@ const commentSchema = new Schema({
 const PostSchema = new Schema({
     description: {
         type: String,
-        required: false
     },
     contentType: {
         type: String,
         required: true,
         enum: ['image', 'video', 'audio']
     },
-    contentUrl: {
+    contentUrl: [{
         type: String,
         required: true
-    },
+    }],
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',

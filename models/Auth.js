@@ -5,11 +5,7 @@ const jwt = require('jsonwebtoken');
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema({
-    firstName: {
-        type: String,
-        required: true
-    },
-    otherName: {
+    fullName: {
         type: String,
         required: true
     },
@@ -41,13 +37,6 @@ const userSchema = new Schema({
         type: Date,
         default: null
     },
-    resetToken: String,
-    resetTokenExpiration: Date,
-    isVerified: {
-        type: Boolean,
-        default: false
-    },
-    verificationToken: String,
     followers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
