@@ -40,7 +40,6 @@ profileSchema.virtual('profilePictureUrl').get(function () {
     return `${baseUrl}/${this.profilePicture.replace(/\\/g, '/')}`;
 });
 
-// Virtual for cover photo URL
 profileSchema.virtual('coverPhotoUrl').get(function () {
     if (!this.coverPhoto) {
         return null;
@@ -49,7 +48,6 @@ profileSchema.virtual('coverPhotoUrl').get(function () {
     return `${baseUrl}/${this.coverPhoto.replace(/\\/g, '/')}`;
 });
 
-// Ensure virtuals are included when converting to JSON
 profileSchema.set('toJSON', { virtuals: true });
 profileSchema.set('toObject', { virtuals: true });
 
