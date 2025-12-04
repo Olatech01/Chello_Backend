@@ -52,7 +52,7 @@ const updateProfile = async (req, res) => {
         }
 
         // Prepare response with full URLs
-        const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+        const baseUrl = BASE_URL || `${req.protocol}://${req.get('host')}`;
         const responseProfile = profile.toObject();
 
         // Add full URLs for images

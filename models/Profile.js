@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { BASE_URL } = require('../utils/URL');
 
 const profileSchema = new mongoose.Schema({
     user: {
@@ -36,7 +37,7 @@ profileSchema.virtual('profilePictureUrl').get(function () {
     if (!this.profilePicture) {
         return null;
     }
-    const baseUrl = process.env.BASE_URL || 'http://localhost:6060';
+    const baseUrl = BASE_URL || 'http://localhost:6060';
     return `${baseUrl}/${this.profilePicture.replace(/\\/g, '/')}`;
 });
 
@@ -44,7 +45,7 @@ profileSchema.virtual('coverPhotoUrl').get(function () {
     if (!this.coverPhoto) {
         return null;
     }
-    const baseUrl = process.env.BASE_URL || 'http://localhost:6060';
+    const baseUrl = BASE_URL || 'http://localhost:6060';
     return `${baseUrl}/${this.coverPhoto.replace(/\\/g, '/')}`;
 });
 

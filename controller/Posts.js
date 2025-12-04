@@ -1,5 +1,8 @@
 const postModel = require('../models/Post');
 const notificationModel = require('../models/Notifications');
+const { BASE_URL } = require('../utils/URL');
+
+const base_url = BASE_URL
 
 const createPost = async (req, res) => {
     try {
@@ -9,16 +12,14 @@ const createPost = async (req, res) => {
             return res.status(400).json({ error: "No files uploaded" });
         }
 
-        const BASE_URL = process.env.BASE_URL || "http://localhost:6060";
         const contentUrls = [];
         let contentType = "text";
 
         const processFiles = (files, type) => {
             if (files && files.length > 0) {
                 files.forEach(file => {
-                    // Use only the filename, not full path
                     const filename = file.filename || file.path.split(/[\\/]/).pop();
-                    contentUrls.push(`${BASE_URL}/uploads/${filename}`);
+                    contentUrls.push(`${base_url}/uploads/${filename}`);
                 });
                 contentType = type;
             }
@@ -42,7 +43,6 @@ const createPost = async (req, res) => {
 
         await post.save();
 
-        // Populate user if needed before sending
         await post.populate('user', 'username email profilePicture');
 
         res.status(201).json({
