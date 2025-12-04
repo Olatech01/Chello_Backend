@@ -1,7 +1,7 @@
 const express = require("express");
 const { register, emailVerification, login, changePassword, followUser, unFollowUser } = require("../controller/User");
 const upload = require("../config/multerConfig");
-const { createGroup, getGroupById, getAllGroups, updateGroup, deleteGroup, joinGroup } = require("../controller/Groups");
+const { createGroup, getGroupById, getAllGroups, updateGroup, deleteGroup, joinGroup, getGroupsByUser } = require("../controller/Groups");
 const { createPost, getAllPosts, getPostById, deletePost, updatePost, likePost, commentPost, getPostsByUser, mentionUser, bookmarkPost, unbookmarkPost, getAllBookmarks, unlikePost, getAllComments, replyComment } = require("../controller/Posts");
 const auth = require("../middleWare/auth");
 const { getProfile, updateProfile } = require("../controller/ProfileController");
@@ -51,6 +51,7 @@ router.post("/groups", auth, upload.fields([
     { name: "profilePhoto", maxCount: 1 },
     { name: "coverPhoto", maxCount: 1 }
 ]), createGroup);
+router.get("/myGroups", auth, getGroupsByUser)
 router.get('/groups', auth, getAllGroups);
 router.get('/groups/:id', auth, getGroupById);
 router.put('/groups/:id', auth, upload.fields([

@@ -29,7 +29,6 @@ const createPost = async (req, res) => {
         processFiles(req.files.videos, "video");
         processFiles(req.files.audios, "audio");
 
-        // If no media, but description exists → text post
         if (contentUrls.length === 0 && description) {
             contentType = "text";
         }
@@ -37,7 +36,7 @@ const createPost = async (req, res) => {
         const post = new postModel({
             description: description || "",
             contentType,
-            contentUrl: contentUrls,  // Now clean URLs
+            contentUrl: contentUrls, 
             user: req.user._id
         });
 
@@ -59,7 +58,6 @@ const createPost = async (req, res) => {
         });
     }
 };
-
 
 
 
