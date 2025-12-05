@@ -39,6 +39,10 @@ const PostSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
+    group: {
+        type: Schema.Types.ObjectId,
+        ref: 'Group'
+    },
     comments: [commentSchema],
     bookmarks: [{
         type: Schema.Types.ObjectId,

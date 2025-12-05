@@ -36,7 +36,7 @@ const createPost = async (req, res) => {
         const post = new postModel({
             description: description || "",
             contentType,
-            contentUrl: contentUrls, 
+            contentUrl: contentUrls,
             user: req.user._id
         });
 
@@ -380,6 +380,38 @@ const getAllBookmarks = async (req, res) => {
     }
 };
 
+// Get posts by group
+const getPostsByGroup = async (req, res) => {
+    try {
+        const groupId = req.params.groupId;
+        const { page = 1, limit = 20 } = req.query;
+
+        const posts = await Post.find({ group: groupId })
+            .populate('user', 'username profilePicture')
+            .populate('comments.user', 'username profilePicture')
+            .sort({ createdAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+
+        const total = await Post.countDocuments({ group: groupId });
+
+        res.status(200).json({
+            success: true,
+            count: posts.length,
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            data: posts
+        });
+    } catch (error) {
+        console.error("Get posts by group error:", error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     createPost,
     getAllPosts,
@@ -395,5 +427,6 @@ module.exports = {
     unbookmarkPost,
     getAllBookmarks,
     getAllComments,
-    replyComment
+    replyComment,
+    getPostsByGroup
 };

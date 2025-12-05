@@ -131,8 +131,7 @@ const getAllUsers = async (req, res) => {
             },
             {
                 $project: {
-                    firstName: 1,
-                    otherName: 1,
+                    fullName: 1,
                     email: 1,
                     dateJoined: '$createdAt',
                     lastActive: '$lastLogin',
