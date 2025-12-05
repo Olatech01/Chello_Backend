@@ -126,7 +126,10 @@ const login = async (req, res) => {
         }
         if (user.isSuspended) {
             if (user.suspensionEndDate && user.suspensionEndDate > Date.now()) {
-                return res.status(403).json({ error: `Your account is suspended until ${user.suspensionEndDate}` });
+                const formattedDate = new Date(user.suspensionEndDate).toLocaleString();
+                return res.status(403).json({
+                    error: `Your account is suspended until ${formattedDate}`
+                });
             } else {
                 user.isSuspended = false;
                 user.suspensionEndDate = null;
