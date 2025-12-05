@@ -94,7 +94,11 @@ const getGroupsByUser = async (req, res) => {
 
 const getAllGroups = async (req, res) => {
     try {
-        const groups = await Group.find();
+        const groups = await Group.find()
+        .populate('creator', 'username email profilePicture')
+            .populate('inviteMembers', 'username email profilePicture')
+            .sort({ createdAt: -1 });
+
         res.status(200).json(groups);
     } catch (error) {
         res.status(500).json({ error: error.message });
