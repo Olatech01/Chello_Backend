@@ -136,7 +136,20 @@ const getAllUsers = async (req, res) => {
                     dateJoined: '$createdAt',
                     lastActive: '$lastLogin',
                     posts: { $size: '$posts' },
-                    totalReports: { $size: '$reports' } 
+                    totalReports: { $size: '$reports' },
+                    status: { // Calculate status in backend
+                        $cond: {
+                            if: { $eq: ['$isBlocked', true] },
+                            then: 'blocked',
+                            else: {
+                                $cond: {
+                                    if: { $eq: ['$isSuspended', true] },
+                                    then: 'suspended',
+                                    else: 'active'
+                                }
+                            }
+                        }
+                    }
                 }
             }
         ]);
